@@ -1105,9 +1105,12 @@ const ReposList: React.FC<{ itemKeys: string[] }> = ({ itemKeys }) => {
     const q = searchQuery.trim().toLowerCase();
     if (q) result = result.filter((r) => r.fullName.toLowerCase().includes(q));
 
-    setPage(0);
     return result;
   }, [items, statusFilter, searchQuery]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [statusFilter, searchQuery]);
 
   const sorted = useMemo(() => {
     const dir = sortOrder === 'asc' ? 1 : -1;
@@ -2158,15 +2161,19 @@ const PRsList: React.FC<{ itemKeys: string[] }> = ({ itemKeys }) => {
 
   const counts = useMemo(() => getPrStatusCounts(items), [items]);
 
-  const filtered = useMemo(() => {
-    const result = filterPrs(items, {
-      statusFilter,
-      searchQuery,
-      includeNumber: true,
-    });
+  const filtered = useMemo(
+    () =>
+      filterPrs(items, {
+        statusFilter,
+        searchQuery,
+        includeNumber: true,
+      }),
+    [items, statusFilter, searchQuery],
+  );
+
+  useEffect(() => {
     setPage(0);
-    return result;
-  }, [items, statusFilter, searchQuery]);
+  }, [statusFilter, searchQuery]);
 
   const sorted = useMemo(() => {
     const dir = sortOrder === 'asc' ? 1 : -1;
